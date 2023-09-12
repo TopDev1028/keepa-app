@@ -11,10 +11,12 @@ from dotenv import load_dotenv
 load_dotenv()
 API_KEY = os.environ["KEEPA_API"]
 translator = Translator()
-
+current_directory = os.getcwd()
 
 current_date = datetime.date.today()
-asin_result_file_name = "results\\asin\\" + current_date.strftime("%Y-%m-%d") + ".csv"
+asin_result_file_name = os.path.join(
+    current_directory, "results", "asin", current_date.strftime("%Y-%m-%d") + ".csv"
+)
 
 
 def translate_en_es(strings):
@@ -58,7 +60,14 @@ def scrap():
 
 def asin_scrap():
     ASINS = []
-    with open("settings\\asins.csv", "r") as file:
+    with open(
+        os.path.join(
+            current_directory,
+            "settings",
+            "asins.csv",
+        ),
+        "r",
+    ) as file:
         csv_reader = csv.reader(file)
 
         for row in csv_reader:

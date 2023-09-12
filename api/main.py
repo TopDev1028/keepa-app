@@ -10,6 +10,8 @@ import json
 
 from engine import *
 
+current_directory = os.getcwd()
+
 app = FastAPI()
 scheduler = BackgroundScheduler()
 is_work_service_running = False
@@ -17,7 +19,7 @@ service_running = False
 thread = threading.Thread(target=scrap)
 
 setting = {}
-with open("settings\\settings.json") as file:
+with open(os.path.join(current_directory, "settings", "settings.json")) as file:
     setting = json.load(file)
 
 app.add_middleware(
@@ -62,7 +64,7 @@ async def upload_file(file: UploadFile = File(...)):
 @app.post("/download")
 async def download_file(file_request: dict):
     file_name = file_request["filename"]
-    file_path = f"results\\{file_name}"
+    file_path = os.path.join(current_directory, "results", file_name)
     return FileResponse(file_path, filename=file_name)
 
 
@@ -111,12 +113,12 @@ async def start_service():
 async def get_file_info():
     asin_files = []
     filter_files = []
-    asin_path = "results\\asin"
+    asin_path = os.path.join(current_directory, "results", "asin")
     asin_names = os.listdir(asin_path)
     for asin_name in asin_names:
         asin_files.append(asin_name)
 
-    filter_path = "results\\filter"
+    filter_path = os.path.join(current_directory, "results", "filter")
     filter_names = os.listdir(asin_path)
     for filter_name in filter_names:
         filter_files.append(filter_name)
@@ -147,7 +149,10 @@ def save_filter(data: Schedule):
     setting["schedule"]["hour"] = hour
     setting["schedule"]["minute"] = minute
 
-    with open("settings\\settings.json", "w") as file:
+    with open(
+        os.path.join(current_directory, "settings", "settings.json"),
+        "w",
+    ) as file:
         json.dump(setting, file)
 
     return {"message": "Data received successfully"}
