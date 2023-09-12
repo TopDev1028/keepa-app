@@ -1,0 +1,6 @@
+-node.js
+16.17.1
+-mongod
+6.0.2
+-python
+3.10.9
